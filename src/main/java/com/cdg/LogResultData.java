@@ -7,6 +7,8 @@ public class LogResultData {
     private String top3ServiceId;
     private String browserUsage;
 
+    private String peakTime;
+
     public String getMaxApiKey() {
         return maxApiKey;
     }
@@ -23,10 +25,16 @@ public class LogResultData {
         return browserUsage;
     }
 
-    public LogResultData(String maxApiKey, String countByStatusCode, String top3ServiceId, String browserUsage) {
+    public String getPeakTime() {
+        return peakTime;
+    }
+
+    public LogResultData(String maxApiKey, String countByStatusCode, String top3ServiceId, String browserUsage, String peakTime) {
         this.maxApiKey = maxApiKey;
         this.countByStatusCode = countByStatusCode;
         this.top3ServiceId = top3ServiceId;
         this.browserUsage = browserUsage;
+        this.peakTime = peakTime;
     }
+
 }

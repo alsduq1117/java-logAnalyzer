@@ -5,14 +5,27 @@ import java.util.*;
 public class LogAnalyzer {
 
 
-    public LogResultData analyzeLogs(LogData logData){
+    public LogResultData analyzeLogs(LogData logData) {
 
         String maxApiKey = getMaxApiKey(logData);
         String countByStatusCode = getCountByStatusCode(logData);
         String top3ServiceId = getTop3ServiceId(logData);
         String browserUsage = getBrowserUsage(logData);
+        String peakTime = getPeakTime(logData);
 
-        return new LogResultData(maxApiKey,countByStatusCode,top3ServiceId,browserUsage);
+
+        return new LogResultData(maxApiKey, countByStatusCode, top3ServiceId, browserUsage, peakTime);
+    }
+
+    private String getPeakTime(LogData logData) {
+        Map.Entry<String, Integer> peakTimeEntry = null;
+        for (Map.Entry<String, Integer> entry : logData.getTimeCount().entrySet()) {
+
+            if (peakTimeEntry == null || entry.getValue() > peakTimeEntry.getValue()) {
+                peakTimeEntry = entry;
+            }
+        }
+        return peakTimeEntry.getKey();
     }
 
     private String getBrowserUsage(LogData logData) {
@@ -22,10 +35,10 @@ public class LogAnalyzer {
         // 엔트리 값을 기준으로 내림차순 정렬
         entryList.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
 
-        for(Map.Entry<String,Integer> entry : entryList){
+        for (Map.Entry<String, Integer> entry : entryList) {
             total += entry.getValue();
         }
-        for(Map.Entry<String,Integer> entry : entryList){
+        for (Map.Entry<String, Integer> entry : entryList) {
             String browserName = entry.getKey();
             Integer count = entry.getValue();
             sb.append(String.format("%s : %.1f%%", browserName, ((float) count / total * 100)) + "\n");
@@ -45,7 +58,7 @@ public class LogAnalyzer {
         // 상위 3개의 엔트리를 추출
         List<Map.Entry<String, Integer>> topEntries = entryList.subList(0, 3);
 
-        for(Map.Entry<String, Integer> entry : topEntries) {
+        for (Map.Entry<String, Integer> entry : topEntries) {
             sb.append(entry.getKey() + " : " + entry.getValue() + "\n");
         }
 
@@ -54,7 +67,14 @@ public class LogAnalyzer {
 
     private String getCountByStatusCode(LogData logData) {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<Integer, Integer> entry : logData.getStatusCodeCount().entrySet()) {
+
+
+        List<Map.Entry<Integer, Integer>> entryList = new ArrayList<>(logData.getStatusCodeCount().entrySet());
+
+        // 엔트리 키를 기준으로 오름차순 정렬
+        entryList.sort(Map.Entry.comparingByKey());
+
+        for (Map.Entry<Integer, Integer> entry : entryList) {
             Integer statusCode = entry.getKey();
             Integer count = entry.getValue();
             sb.append(statusCode + " : " + count + "\n");
@@ -64,9 +84,8 @@ public class LogAnalyzer {
 
     private String getMaxApiKey(LogData logData) {
         Map.Entry<String, Integer> maxEntry = null;
-        for(Map.Entry<String,Integer> entry : logData.getApiKeyCount().entrySet()){
-            if (maxEntry == null || entry.getValue() > maxEntry.getValue())
-            {
+        for (Map.Entry<String, Integer> entry : logData.getApiKeyCount().entrySet()) {
+            if (maxEntry == null || entry.getValue() > maxEntry.getValue()) {
                 maxEntry = entry;
             }
         }

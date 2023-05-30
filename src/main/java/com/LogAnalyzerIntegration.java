@@ -26,7 +26,7 @@ public class LogAnalyzerIntegration {
                     String[] seperate = log.split("[\\[\\]]"); //  [ 또는 ] 문자를 기준으로 문자열을 분할    ["", "상태코드", "", "URL", "" , "브라우저", "" , "시간대"]
                     int statusCode = Integer.parseInt(seperate[1]);
                     String url = seperate[3];
-                    String time = seperate[7];
+                    String time = seperate[7].substring(0,16);
                     String apiKey;
                     if(url.indexOf("&") != -1) {
                         apiKey = url.substring(url.indexOf("apikey=") + 7, url.indexOf("&"));

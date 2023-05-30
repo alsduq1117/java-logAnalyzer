@@ -47,8 +47,9 @@ public class LogReader {
         String apiKey = extractApiKey(url);
         String serviceId = extractServiceId(url);
         String browser = seperate[5];
+        String time = seperate[7].substring(0,16);
         
-        return new Log(statsusCode,apiKey,serviceId,browser);
+        return new Log(statsusCode,apiKey,serviceId,browser,time);
 
     }
 
